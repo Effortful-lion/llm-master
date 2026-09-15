@@ -13,7 +13,8 @@ import { useHistory } from './components/useHistory.js'
 // 轻量记录组件（渲染为空）：在 mount 后注册“after route change”钩子。
 // 注意：vitepress 1.6.x 不导出 onBeforeRouteChange/onAfterRouteChange，
 // 改为直接挂在 useRouter() 返回的同一个 router 对象上（内部 go() 会读取这些钩子）。
-// onAfterRouteChange 在路由切换完成后触发，此时新页面已渲染，h1 是准确的。
+// onAfterRouteChange 在路由切换、loadPage 完成后触发，此时 route.data 已是新页面的数据，
+// 从这里读 title（frontmatter）比抓 DOM h1 更可靠（避免渲染 flush 竞态）。
 const HistoryRecorder = {
   name: 'HistoryRecorder',
   setup() {
@@ -22,10 +23,11 @@ const HistoryRecorder = {
 
     function recordCurrentPage(to) {
       if (!to || typeof to !== 'string' || !to.includes('/docs/')) return
-      // 优先抓浏览器当前 document h1，退化到路径末段
+      // 标题从路由数据读（route.data.title = frontmatter/首个标题，同步、无渲染竞态），
+      // 空则退化为路径末段。不抓 DOM 的 h1 —— onAfterRouteChange 触发时新页 DOM 未必已 flush，
+      // 抓 h1 可能拿到上一页的标题或空值。
       const title =
-        (typeof document !== 'undefined' &&
-          document.querySelector('h1')?.textContent?.trim()) ||
+        router.route.data.title?.trim() ||
         to.split('/').filter(Boolean).slice(-1)[0]
       history.record({ path: to, title })
     }
