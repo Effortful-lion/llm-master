@@ -1,4 +1,7 @@
 node_modules/
 .vitepress/dist/
 src/docs
+# 构建期生成（由 scripts/buildSearchIndex.mjs 产出）
+.vitepress/search-index.json
+src/public/search-index.json
 .tmp/
