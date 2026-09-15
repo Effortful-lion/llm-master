@@ -70,4 +70,9 @@ const categories = siteInfo.categories
 .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: var(--vp-c-bg-soft); border: 1px solid var(--vp-c-divider); font-size: .85em; text-decoration: none; }
 .tag:hover { border-color: var(--vp-c-brand-1); }
 .count { font-size: .72em; color: var(--vp-c-text-3); }
+
+@media (max-width: 720px) {
+  .home { padding: 20px 16px; }
+  .grid { grid-template-columns: 1fr; }
+}
 </style>
