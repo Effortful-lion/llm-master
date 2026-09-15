@@ -30,9 +30,9 @@ function firstH1(content) {
   return ''
 }
 
-// “最新文章”的代表性篇目。站点文档无可靠的时间戳（documents 为同一 checkout 时间），
-// 按 mtime 排序无意义；这里选一组有代表性的核心文章，构建时校验路由是否存在，
-// 缺失则从扫描结果回退补足，避免 404。
+// 「推荐阅读」的手工精选篇目（对应首页模块重命名后语义一致）。站点文档无可靠时间戳
+// （无 frontmatter date、同为 checkout 时间，mtime 无意义），无法按时间自动排序；
+// 由人工在此维护。构建时校验路由是否存在，缺失则从扫描结果回退补足，避免 404。
 const CURATED_LATEST = [
   ['llm/app/why_rag', '为什么有了大模型还需要 RAG？'],
   ['llm/app/chain_of_rag', 'RAG 完整链路拆解'],
@@ -99,8 +99,7 @@ export default {
       .filter((t) => t.href)
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
 
-    // 分类卡片：README 优先、否则目录下第一篇，并统计文章数。路由均来自扫到的真实文档，
-    // 保证可点不 404。
+    // 分类卡片：README 优先、否则目录下第一篇。路由均来自扫到的真实文档，保证可点不 404。
     const byRoute = new Map(docs.map((d) => [d.route, d]))
     const categories = CATEGORY_META.map((meta) => {
       const prefix = `/docs/${meta.dir}/`
@@ -110,12 +109,13 @@ export default {
       return {
         name: meta.name,
         desc: meta.desc,
-        link: readme ? readme.route : fallback ? fallback.route : null,
-        count: dirDocs.length
+        link: readme ? readme.route : fallback ? fallback.route : null
       }
-    }).filter((c) => c.count > 0)
+    }).filter((c) => c.link)
 
-    // 最新文章：优质篇目优先（校验存在），排除 README 落地页，不足则按 mtime 回退补足。
+    // 最新文章：优选的“推荐阅读”清单由 CURATED_LATEST 手工维护（本站文档无可靠时间戳，
+    // 无 frontmatter date，按时间自动排序不可行），新增 .md 不会自动进来，需手工增删。
+    // 已校验篇目均存在，缺失时按文件 mtime/文件名回退补足。排除 README 落地页。
     const isReadme = (r) => r.endsWith('/README')
     const latest = CURATED_LATEST.map(([r]) => byRoute.get(`/docs/${r}`))
       .filter((d) => d && !isReadme(d.route))
