@@ -1,4 +1,9 @@
-// Placeholder prepare step for the site scaffold.
-// This will be replaced by the real docs-ingestion build step (content
-// symlink + index/search generation) in a later task.
-console.log('[prepare] no-op placeholder build step (site skeleton)')
+import { execSync } from 'node:child_process'
+
+const run = (name) => {
+  console.log(`\n=== ${name} ===`)
+  execSync(`node scripts/${name}.mjs`, { cwd: process.cwd(), stdio: 'inherit' })
+}
+
+// 各阶段（后续任务逐步追加：genSidebar / buildSearchIndex / generateTagPages）
+run('linkContent')
