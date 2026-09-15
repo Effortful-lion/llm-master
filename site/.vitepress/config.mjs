@@ -1,10 +1,15 @@
 import { defineConfig } from 'vitepress'
+import generatedSidebar from './sidebar.generated.mjs'
 
 export default defineConfig({
   title: 'LLM 学习笔记',
   description: '大模型 / LLM 应用开发学习笔记与面试资料',
   srcDir: 'src',
   cleanUrls: true,
+
+  themeConfig: {
+    sidebar: generatedSidebar.sidebar
+  },
   // ignoreDeadLinks 的忽略回调只接收 href（拿不到来源页面路径），无法按“链接是否来自
   // docs/ 子树”精确过滤。外来 docs/ 内容既有外部 URL 误报（hhf.../docs/...，都被判为
   // “死链”），又有真实损坏的相对 index 链接（../java/index 等）。当前所有页面均为外来

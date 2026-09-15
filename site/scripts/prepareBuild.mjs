@@ -7,5 +7,6 @@ const run = (name) => {
   execSync(`node scripts/${name}.mjs`, { cwd: process.cwd(), stdio: 'inherit' })
 }
 
-// 各阶段（后续任务逐步追加：genSidebar / buildSearchIndex / generateTagPages）
+// 各阶段（后续任务逐步追加：buildSearchIndex / generateTagPages）
 run('linkContent')
+run('genSidebar')
