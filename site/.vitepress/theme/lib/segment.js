@@ -28,8 +28,9 @@ export function segmentQuery(query) {
   const seen = new Set()
   return units
     .map(cleanUnit)
-    .filter((u) => u.length >= 2)
-    .filter((u) => !/^[0-9]/.test(u) && !/^[a-z]$/i.test(u))
+    // 仅丢弃低信息的英文单字符；纯 punctuation 已由 PUNCT_REGEX 切分 + filter(Boolean)
+    // 处理，以数字开头的词（"2026"、"GPT-4"、"3.5"、"DeepSeek-V3"）为合法查询，不得丢弃。
+    .filter((u) => !/^[a-z]$/i.test(u))
     .filter((u) => { if (seen.has(u)) return false; seen.add(u); return true })
 }
 

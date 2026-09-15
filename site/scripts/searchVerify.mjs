@@ -19,7 +19,9 @@ const cases = [
   { desc: '中文连词精确命中 RAG 文档', query: '检索增强生成', expect: '为什么有了大模型还需要RAG' },
   { desc: '中英混合命中', query: 'RAG 切片策略', expect: '切片策略' },
   { desc: '英文缩写命中', query: 'RAG', expect: 'RAG' },
-  { desc: '上下文工程命中', query: '上下文工程', expect: '上下文工程' }
+  { desc: '上下文工程命中', query: '上下文工程', expect: '上下文工程' },
+  // 回归：以数字开头的查询不得被丢弃（"2026"）→ 应命中含年份的文档，而非空结果
+  { desc: '以数字开头的查询命中', query: '2026', expect: '2026' }
 ]
 
 let failed = 0
