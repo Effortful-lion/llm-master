@@ -7,9 +7,11 @@
     "docs:prepare": "node scripts/prepareBuild.mjs",
     "docs:dev": "vitepress dev --port 5173",
     "docs:build": "npm run docs:prepare && vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "docs:search-check": "node scripts/searchVerify.mjs"
   },
   "dependencies": {
+    "@node-rs/jieba": "^2.0.3",
     "gray-matter": "^4.0.3",
     "nodejieba": "^2.6.0",
     "unist-util-visit": "^5.0.0"

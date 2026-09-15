@@ -8,7 +8,11 @@ export default defineConfig({
   cleanUrls: true,
 
   themeConfig: {
-    sidebar: generatedSidebar.sidebar
+    sidebar: generatedSidebar.sidebar,
+    // 关闭内置 search（默认 provider:'local'，MiniSearch 不支持注入中文连词分词，
+    // 无法可靠命中“检索增强生成”这类短语）。自建搜索见
+    // scripts/buildSearchIndex.mjs + SearchDialog.vue + theme/components/SearchDialog.vue。
+    search: false
   },
   // ignoreDeadLinks 的忽略回调只接收 href（拿不到来源页面路径），无法按“链接是否来自
   // docs/ 子树”精确过滤。外来 docs/ 内容既有外部 URL 误报（hhf.../docs/...，都被判为
