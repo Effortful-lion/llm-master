@@ -11,3 +11,4 @@ const run = (name) => {
 run('linkContent')
 run('genSidebar')
 run('buildSearchIndex')
+run('generateTagPages')

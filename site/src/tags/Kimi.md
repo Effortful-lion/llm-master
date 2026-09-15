@@ -1,0 +1,4 @@
+# Kimi
+
+- [kimi-k2-7-code](/docs/llm/news/kimi-k2-7-code)
+- [kimi-k3](/docs/llm/news/kimi-k3)
