@@ -5,7 +5,7 @@
 // HistoryRecorder：路由变化后把进入的文档页写入 localStorage 历史记录。
 import DefaultTheme from 'vitepress/theme'
 import { h, onMounted } from 'vue'
-import { useRouter } from 'vitepress'
+import { useRouter, useData } from 'vitepress'
 import SearchDialog from './components/SearchDialog.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import { useHistory } from './components/useHistory.js'
@@ -20,6 +20,15 @@ const HistoryRecorder = {
   setup() {
     const history = useHistory()
     const router = useRouter()
+    const { site } = useData()
+
+    // 存储时去掉 base（如 /llm-master/）前缀，存 root-absolute 路径（以 / 开头）；
+    // 渲染端（HomePage 最近读过）再经 withBase() 加回，保证历史链接与 base 解耦、随 base 变化稳定。
+    const stripBase = (p) => {
+      const base = site.value.base || '/'
+      if (!base || base === '/' || typeof p !== 'string' || !p.startsWith(base)) return p
+      return '/' + p.slice(base.length)
+    }
 
     function recordCurrentPage(to) {
       if (!to || typeof to !== 'string' || !to.includes('/docs/')) return
@@ -29,7 +38,7 @@ const HistoryRecorder = {
       const title =
         router.route.data.title?.trim() ||
         to.split('/').filter(Boolean).slice(-1)[0]
-      history.record({ path: to, title })
+      history.record({ path: stripBase(to), title })
     }
 
     // 保留可能存在的既有钩子，避免覆盖

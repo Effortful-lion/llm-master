@@ -4,7 +4,7 @@
 // 查询期在前端用 segment.js 分词 + “包含全部查询词（子串判含）”匹配。
 // 仅客户端逻辑（onMounted 内 fetch / 绑定事件），SSR 安全。
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRouter } from 'vitepress'
+import { useRouter, withBase } from 'vitepress'
 import { segmentQuery, rankResults } from '../lib/segment.js'
 
 const INDEX_URL = `${import.meta.env.BASE_URL}search-index.json`
@@ -60,7 +60,9 @@ export default {
 
     const go = (route) => {
       closeDialog()
-      if (route) router.go(route)
+      // 搜索结果路由为 root-absolute（如 /docs/...）；base 部署下 router 需要 base 前缀，
+      // 经 withBase() 补上，链接在 GitHub Pages 才能命中。
+      if (route) router.go(withBase(route))
     }
 
     const onKeydown = (e) => {

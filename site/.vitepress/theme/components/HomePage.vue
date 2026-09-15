@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { withBase } from 'vitepress'
 import { data as siteInfo } from '../../../.vitepress/data/site.info.data.js'
 import { useHistory } from './useHistory.js'
 
@@ -22,7 +23,7 @@ const categories = siteInfo.categories
     <section class="block">
       <h2>分类</h2>
       <div class="grid">
-        <a v-for="c in categories" :key="c.link" class="card" :href="c.link">
+        <a v-for="c in categories" :key="c.link" class="card" :href="withBase(c.link)">
           <h3>{{ c.name }}</h3><p>{{ c.desc }}</p>
         </a>
       </div>
@@ -31,7 +32,7 @@ const categories = siteInfo.categories
     <section class="block">
       <h2>最近读过</h2>
       <ul v-if="history.length" class="plain-list">
-        <li v-for="h in history.slice(0, 5)" :key="h.path"><a :href="h.path">{{ h.title }}</a></li>
+        <li v-for="h in history.slice(0, 5)" :key="h.path"><a :href="withBase(h.path)">{{ h.title }}</a></li>
       </ul>
       <p v-else class="muted">暂无阅读记录</p>
     </section>
@@ -39,14 +40,14 @@ const categories = siteInfo.categories
     <section class="block">
       <h2>标签</h2>
       <div class="tag-cloud">
-        <a v-for="t in siteInfo.tags" :key="t.href" class="tag" :href="t.href">{{ t.name }}<span class="count">{{ t.count }}</span></a>
+        <a v-for="t in siteInfo.tags" :key="t.href" class="tag" :href="withBase(t.href)">{{ t.name }}<span class="count">{{ t.count }}</span></a>
       </div>
     </section>
 
     <section class="block">
       <h2>推荐阅读</h2>
       <ul class="plain-list">
-        <li v-for="d in siteInfo.latest" :key="d.route"><a :href="d.route">{{ d.title }}</a></li>
+        <li v-for="d in siteInfo.latest" :key="d.route"><a :href="withBase(d.route)">{{ d.title }}</a></li>
       </ul>
     </section>
   </div>
