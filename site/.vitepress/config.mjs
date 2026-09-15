@@ -7,6 +7,10 @@ export default defineConfig({
   description: '大模型 / LLM 应用开发学习笔记与面试资料',
   srcDir: 'src',
   cleanUrls: true,
+  // GitHub Pages 以 project page 部署在本仓库名子路径下：<owner>.github.io/llm-master/。
+  // 不设 base，所有资源/路由会按 / 查找而 404；若改为 user/org page 或自定义域名根部署，
+  // 需同步改回 '/'。
+  base: '/llm-master/',
 
   themeConfig: {
     sidebar: generatedSidebar.sidebar,
