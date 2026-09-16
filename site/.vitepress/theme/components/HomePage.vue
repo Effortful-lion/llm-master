@@ -44,13 +44,7 @@ const categories = siteInfo.categories
       </div>
     </section>
 
-    <section class="block">
-      <h2>推荐阅读</h2>
-      <ul class="plain-list">
-        <li v-for="d in siteInfo.latest" :key="d.route"><a :href="withBase(d.route)">{{ d.title }}</a></li>
-      </ul>
-    </section>
-  </div>
+    </div>
 </template>
 
 <style scoped>

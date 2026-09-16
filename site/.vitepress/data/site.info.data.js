@@ -1,10 +1,10 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import matter from 'gray-matter'
 
 // build 期数据加载器（VitePress *.data.js，default export 需含 load()）：
-// 聚合“标签云”与“最新文章”数据，供首页 HomePage.vue import 消费。
+// 聚合“标签云”与“分类卡片”数据，供首页 HomePage.vue import 消费。
 // 本文件位于 site/.vitepress/data/，用 import.meta.url 锚定路径，不依赖 process.cwd()——
 // 无论 vite 在何处起进程都能正确定位 src/。
 const docsRoot = fileURLToPath(new URL('../../src/docs', import.meta.url))
@@ -29,18 +29,6 @@ function firstH1(content) {
   }
   return ''
 }
-
-// 「推荐阅读」的手工精选篇目（对应首页模块重命名后语义一致）。站点文档无可靠时间戳
-// （无 frontmatter date、同为 checkout 时间，mtime 无意义），无法按时间自动排序；
-// 由人工在此维护。构建时校验路由是否存在，缺失则从扫描结果回退补足，避免 404。
-const CURATED_LATEST = [
-  ['llm/app/why_rag', '为什么有了大模型还需要 RAG？'],
-  ['llm/app/chain_of_rag', 'RAG 完整链路拆解'],
-  ['llm/app/finetuning_sft_rlhf_dpo', 'SFT、RLHF、DPO：微调方法全景认知'],
-  ['llm/app/lora_qlora', 'LoRA/QLoRA：低秩微调'],
-  ['llm/transformer/transformer_base_1', '为什么所有大模型都绕不开 Transformer？'],
-  ['llm/intro/model_distillation', '大模型蒸馏是什么？']
-]
 
 // 顶层分类卡片元数据。link 在建时动态生成：目录有 README 则指 README（作为目录落地页，
 // 路由 /docs/<dir>/README），否则回退到该目录下第一篇 .md，保证卡片永远可点不 404。
@@ -85,11 +73,7 @@ export default {
         (data.title && String(data.title).trim()) ||
         firstH1(content) ||
         route.split('/').pop().replace(/[-_]/g, ' ')
-      let mtimeMs = 0
-      try {
-        mtimeMs = statSync(f).mtimeMs
-      } catch {}
-      docs.push({ route: href, title, mtimeMs })
+      docs.push({ route: href, title })
       for (const t of data.tags || []) tagCount.set(t, (tagCount.get(t) || 0) + 1)
     }
 
@@ -113,22 +97,6 @@ export default {
       }
     }).filter((c) => c.link)
 
-    // 最新文章：优选的“推荐阅读”清单由 CURATED_LATEST 手工维护（本站文档无可靠时间戳，
-    // 无 frontmatter date，按时间自动排序不可行），新增 .md 不会自动进来，需手工增删。
-    // 已校验篇目均存在，缺失时按文件 mtime/文件名回退补足。排除 README 落地页。
-    const isReadme = (r) => r.endsWith('/README')
-    const latest = CURATED_LATEST.map(([r]) => byRoute.get(`/docs/${r}`))
-      .filter((d) => d && !isReadme(d.route))
-      .map((d) => ({ route: d.route, title: d.title }))
-    if (latest.length < 4) {
-      const seen = new Set(latest.map((l) => l.route))
-      for (const d of docs.sort((a, b) => b.mtimeMs - a.mtimeMs)) {
-        if (seen.has(d.route)) continue
-        latest.push({ route: d.route, title: d.title })
-        if (latest.length >= 6) break
-      }
-    }
-
-    return { tags, latest, categories }
+    return { tags, categories }
   }
 }
